@@ -1,29 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import Button from './Button';
 import { todoLocalStorage } from '../service/localstorage';
+import useTodoData from '../hooks/useTodoData';
 
 export default function Body() {
 
     const [isEmpty, setIsEmpty] = useState(true);
     const [typedValue, setTypedValue] = useState("");
     const [savedValueId, setSavedValueId] = useState("");
-    const [todoLists, setTodoLists] = useState([]);
-    
-    useEffect(() => {
-        console.log("Mount");
-        let todoList = [];
-        for(let i = 0; i < window.localStorage.length; i++){
-            const key = window.localStorage.key(i);
+    const todoLists = useTodoData();
 
-            const value = JSON.parse(window.localStorage.getItem(key));
+    let todoContainer = [];
 
-            // console.log(key, value);
-            todoList.push({key, value});
-        }
-        setTodoLists(todoList);
-        console.log(todoList);
-
-    }, [savedValueId]);
+    const [todoList, setTodoList] = useState([]);
 
     const addClick = () => {
         // console.log("Click!");
@@ -42,9 +31,18 @@ export default function Body() {
             todoId = Math.floor(Math.random() * 10000);
             // console.log(!todoLocalStorage.get(todoId));
         }while(todoLocalStorage.get(todoId));
-        // console.log(todoId);
-        setSavedValueId(todoId);
-        todoLocalStorage.set(todoId , JSON.stringify(typedValue));
+        console.log(typeof(todoLists));
+        console.log(todoLists);
+
+        if(todoLocalStorage.isExist("Todo Items")){
+            todoContainer.push(todoLists);
+        }
+        todoContainer.push([todoId, typedValue]);
+        setTodoList(todoContainer);
+        console.log(todoList);
+        console.log(todoContainer);
+
+        todoLocalStorage.set("Todo Items" , JSON.stringify(todoContainer));
     }
 
     const valueTyped = (e) => {
@@ -71,17 +69,17 @@ export default function Body() {
                 </div>
             </div>}
             {/* {console.log(todoList)} */}
-            {/* {console.log(todoLists)} */}
-            {todoLists.map((e) => (
+            {console.log(todoLocalStorage.isExist("Todo Items"))}
+            {todoLocalStorage.isExist("Todo Items") ? todoLists.map((e) => (
                 <div key={e.key} className='bg-cyan-500 shadow-lg shadow-cyan-500/50 rounded-lg text-white w-[70%] h-10 flex justify-between items-center mt-5'>
                     <div className='ml-5'>
-                        {e.key}
+                        {e.value}
                     </div>
                     <div className='mr-5'>
                         {e.value}
                     </div>
                 </div>
-            )) }
+            )) : <></> }
         </>
     );
 };
