@@ -1,10 +1,14 @@
 class TodoLocalStorage {
     get(key){
-        return localStorage.getItem(key);
+        return JSON.parse(localStorage.getItem(key));
     }
 
     set(key, value) {
         localStorage.setItem(key, value);
+    }
+
+    remove() {
+        localStorage.removeItem("TodoItems");
     }
 
     isExist(key){
