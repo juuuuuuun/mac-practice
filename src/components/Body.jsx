@@ -10,8 +10,9 @@ export default function Body() {
     const [isEdit, setIsEdit] = useState(true);
     const [selectClicked, setSelectClicked] = useState(false);
     const [typedValue, setTypedValue] = useState("");
-    const [checkedTodo, setCheckedTodo] = useState([]);
     const todoList = useTodoData();
+
+    
 
     let checkedTodoList = [];
 
@@ -55,17 +56,48 @@ export default function Body() {
     }
 
     const isChecked = (e) => {
+        let filteredResult = [];
+        let tempValue = e.target.value;
         console.log(e);
-        console.log(e.target.value);
-        console.log(e.target.checked);
-        console.log("Clicked");
         console.log(checkedTodoList.includes(e.target.value));
         if(e.target.checked){
             if(!checkedTodoList.includes(e.target.value)){
                 checkedTodoList.push(e.target.value);
             }
+        }else{
+            filteredResult = checkedTodoList.filter((checkedTodoList) => {
+                return checkedTodoList !== tempValue;
+            });
+            checkedTodoList = filteredResult;
         }
-        console.log(checkedTodoList)
+        console.log(filteredResult);
+        console.log(checkedTodoList);
+        // setCheckedTodo(checkedTodoList);
+    }
+
+    const deleteSelected = () => {
+        let tempTodoList = todoList;
+        let tempEditTodo = [];
+        console.log(checkedTodoList);
+        checkedTodoList.map((e) => (
+            console.log(e),
+            tempEditTodo = tempTodoList.filter((t) => (
+                t.id !== e
+            )),
+            tempTodoList = tempEditTodo
+            )
+        );
+        console.log(tempEditTodo);
+        console.log(tempTodoList);
+        window.confirm("Do you really want to delete selected items?");
+        tempTodoList.map((e) => (
+            console.log(e),
+            todoService.editTodo(e.todo)
+        ));
+        console.log(selectClicked);
+        setSelectClicked(!selectClicked);
+        console.log(selectClicked);
+        //working as well but it doesnt refresh and show the latest editted item list, even I used useState keep doesnt refresh
     }
 
     const deleteClick = () => {
@@ -90,6 +122,9 @@ export default function Body() {
                 <ul className='m-5 flex'>
                     <li className='mr-5'>
                         <Button addClick={editClick}>Edit Selected</Button>
+                    </li>
+                    <li className='mr-5'>
+                        <Button addClick={deleteSelected}>Delete Selected</Button>
                     </li>
                     <li>
                         <Button addClick={deleteClick}>Delete All</Button>
