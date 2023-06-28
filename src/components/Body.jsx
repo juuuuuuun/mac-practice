@@ -89,11 +89,12 @@ export default function Body() {
         );
         console.log(tempEditTodo);
         console.log(tempTodoList);
-        window.confirm("Do you really want to delete selected items?");
-        tempTodoList.map((e) => (
-            console.log(e),
-            todoService.editTodo(e.todo)
-        ));
+        if(window.confirm("Do you really want to delete selected items?")){
+            tempTodoList.map((e) => (
+                console.log(e),
+                todoService.editTodo(e.todo)
+                ));
+        }
         console.log(selectClicked);
         setSelectClicked(!selectClicked);
         console.log(selectClicked);
